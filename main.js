@@ -108,3 +108,7 @@ function getLogSheet_() {
   }
   return ss.getActiveSheet();
 }
+
+function getOrCreateLabel_(name) {
+  return GmailApp.getUserLabelByName(name) || GmailApp.createLabel(name);
+}
