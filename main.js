@@ -61,7 +61,8 @@ function classifyHRMails() {
 function classifyWithLLM_(text) {
   const prompt = `
 You're an expert email classifier for job applications.
-Classify the email into one word: Interview, Rejected, Received or Other.
+Reply with exactly ONE of these words and nothing else:
+Interview, Rejected, Received, Other.
 
 Email:
 """${text}"""
@@ -86,8 +87,10 @@ Email:
   );
 
   const json = JSON.parse(resp.getContentText());
-  const answer = (json.choices && json.choices[0].message.content || 'Other').trim();
-  Logger.log('🧠 Ответ LLM: ' + answer);
+  const raw = (json.choices && json.choices[0].message.content || '').trim();
+  const match = raw.match(/interview|rejected|received|other/i);
+  const answer = match ? match[0].charAt(0).toUpperCase() + match[0].slice(1).toLowerCase() : 'Other';
+  Logger.log('🧠 Ответ LLM: ' + raw);
   return answer;
 }
 
